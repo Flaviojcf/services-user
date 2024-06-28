@@ -10,7 +10,7 @@ namespace Services.Tests.Application.Commands
     {
         [Fact]
         [Trait("Application", "CreateUser - Command")]
-        public async Task InputDataIsOk_Executed_ReturnOk()
+        public async Task InputDataIsOk_Executed_CreateUser()
         {
             var userRepository = new Mock<IUserRepository>();
 
