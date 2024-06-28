@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using Services.User.Domain.Entities;
 using Services.User.Domain.Repositories;
 using Services.User.Infrastructure.Persistance.MongoDb;
 using Services.User.Infrastructure.Persistance.MongoDb.Repositories;
+using UserEntity = Services.User.Domain.Entities.User;
 
 namespace Services.User.Infrastructure
 {
@@ -44,10 +47,35 @@ namespace Services.User.Infrastructure
                 var options = sp.GetService<MongoDbOptions>();
                 var mongoClient = sp.GetService<IMongoClient>();
 
-                return mongoClient.GetDatabase(options.Database);
+                var database = mongoClient.GetDatabase(options.Database);
+
+                ConfigureMongoDb();
+
+                return database;
             });
 
             return services;
+        }
+
+        public static void ConfigureMongoDb()
+        {
+            if (!BsonClassMap.IsClassMapRegistered(typeof(AggregateRoot)))
+            {
+                BsonClassMap.RegisterClassMap<AggregateRoot>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.UnmapMember(c => c._events);
+                });
+            }
+
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserEntity)))
+            {
+                BsonClassMap.RegisterClassMap<UserEntity>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.SetIgnoreExtraElements(true);
+                });
+            }
         }
 
         private static IServiceCollection AddRepositories(this IServiceCollection services)
