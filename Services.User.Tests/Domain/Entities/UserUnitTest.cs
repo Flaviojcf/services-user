@@ -4,7 +4,7 @@ using UserEntity = Services.User.Domain.Entities.User;
 
 namespace Services.Tests.Domain.Entities
 {
-
+    [Collection(nameof(UserEntity))]
     public class UserUnitTest
     {
         [Fact]
