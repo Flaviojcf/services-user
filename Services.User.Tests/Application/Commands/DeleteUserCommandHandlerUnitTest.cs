@@ -1,6 +1,8 @@
 ﻿using Moq;
 using Services.User.Application.Commands.DeleteUser;
 using Services.User.Domain.Repositories;
+using Services.User.Domain.Services;
+using UserEntity = Services.User.Domain.Entities.User;
 
 namespace Services.Tests.Application.Commands
 {
@@ -13,17 +15,20 @@ namespace Services.Tests.Application.Commands
         public async Task InputDataIsOk_Executed_DeleteUser()
         {
             // Arrange
+            var user = new UserEntity("John Doe", "john.doe@example.com", "p@ssw0rd");
             var userRepository = new Mock<IUserRepository>();
-            var id = Guid.NewGuid();
-            var deleteUserCommand = new DeleteUserCommand(id);
+            var userService = new Mock<IUserService>();
+            userService.Setup(s => s.GetUserById(user.Id)).ReturnsAsync(user);
 
-            var deleteUserCommandHandler = new DeleteUserCommandHandler(userRepository.Object);
+            var deleteUserCommand = new DeleteUserCommand(user.Id);
+
+            var deleteUserCommandHandler = new DeleteUserCommandHandler(userRepository.Object, userService.Object);
 
             // Act
             await deleteUserCommandHandler.Handle(deleteUserCommand, new CancellationToken());
 
             // Assert
-            userRepository.Verify(u => u.DeleteAsync(id), Times.Once);
+            userRepository.Verify(u => u.UpdateAsync(user), Times.Once);
         }
     }
 }
