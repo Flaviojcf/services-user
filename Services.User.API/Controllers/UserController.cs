@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Services.User.Application.Commands.CreateUser;
 using Services.User.Application.Commands.DeleteUser;
+using Services.User.Application.Commands.UpdateUser;
 
 namespace Services.User.API.Controllers
 {
@@ -26,7 +27,7 @@ namespace Services.User.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] CreateUserCommand command)
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserCommand command)
         {
             await _mediator.Send(command);
 
