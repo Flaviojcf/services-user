@@ -7,6 +7,5 @@ namespace Services.User.Domain.Repositories
         Task<UserEntity> GetByIdAsync(Guid id);
         Task AddAsync(UserEntity user);
         Task UpdateAsync(UserEntity user);
-        Task DeleteAsync(Guid id);
     }
 }
